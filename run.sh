@@ -53,6 +53,16 @@ echo "Connect to cluster..."
 mkdir -p ~/.kube && cp -p $TKE_CONFIG_FILE ~/.kube/tke-config
 export KUBECONFIG=~/.kube/tke-config
 
+is_connect_cluster_success=false
+kubectl cluster-info && is_connect_cluster_success=true
+
+if [ "$is_connect_cluster_success" = false ]; then
+    echo "Error: connect to cluster failed." >&2
+    exit 1
+else
+    echo "Connect to cluster success."
+fi
+
 rm -rf $SECRET_DIR_OUT
 unzip -P $SECRET_UNZIP_PASSWORD $SECRET_FILE_ZIP -d $SECRET_DIR_OUT
 
