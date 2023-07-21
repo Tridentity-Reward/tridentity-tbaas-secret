@@ -1,10 +1,13 @@
 #!/bin/bash
 SECRET_FILE_ZIP=tbaas-secrets.zip
-SECRET_UNZIP_PASSWORD="1" # TODO: change to your unzip password
 SECRET_DIR_OUT=tbaas-secrets
 SECRET_NAME=tridentity-tbaas-secrets
 TKE_CONFIG_FILE=tke-config.yml
 FILES_NEED_ENCODE_BASE64=("ca.crt" "user_sign.crt" "user_sign.key" "user_tls.crt" "user_tls.key" "chain_admin_cert" "chain_admin_key")
+
+echo "Please input unzip password:"
+read SECRET_UNZIP_PASSWORD
+echo $SECRET_UNZIP_PASSWORD
 
 # check have secrets file zip
 if [ ! -f "$SECRET_FILE_ZIP" ]; then
