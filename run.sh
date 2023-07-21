@@ -7,7 +7,6 @@ FILES_NEED_ENCODE_BASE64=("ca.crt" "user_sign.crt" "user_sign.key" "user_tls.crt
 
 echo "Please input unzip password:"
 read SECRET_UNZIP_PASSWORD
-echo $SECRET_UNZIP_PASSWORD
 
 # check have secrets file zip
 if [ ! -f "$SECRET_FILE_ZIP" ]; then
@@ -56,6 +55,11 @@ export KUBECONFIG=~/.kube/tke-config
 
 rm -rf $SECRET_DIR_OUT
 unzip -P $SECRET_UNZIP_PASSWORD $SECRET_FILE_ZIP -d $SECRET_DIR_OUT
+
+if [ $? -ne 0 ]; then
+    echo "Error: unzip $SECRET_FILE_ZIP failed." >&2
+    exit 1
+fi
 
 for file in $SECRET_DIR_OUT/*; do
     # check is file in FILES_NEED_ENCODE_BASE64
