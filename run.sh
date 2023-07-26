@@ -72,13 +72,14 @@ if [ $? -ne 0 ]; then
 fi
 
 for file in $SECRET_DIR_OUT/*; do
+
     # check is file in FILES_NEED_ENCODE_BASE64
     if [[ ! " ${FILES_NEED_ENCODE_BASE64[@]} " =~ " $(basename ${file}) " ]]; then
         echo "Skip encode base64 file: $file"
         continue
     fi
-    output_file=$file
     # check is file have extension
+    output_file=$file
     if [[ $file == *"."* ]]; then
         output_file=${file//./_}
         mv $file $output_file
@@ -87,6 +88,12 @@ for file in $SECRET_DIR_OUT/*; do
     echo "Encode base64 file: $output_file"
     base64 -i $output_file -o "$output_file"_base64
     rm -rf $output_file
+done
+
+for file in $SECRET_DIR_OUT/*; do
+    # remove newline
+    tr -d "\n\r" <$file >$file.tmp
+    mv $file.tmp $file
 done
 
 kubectl delete secret $SECRET_NAME --ignore-not-found=true
