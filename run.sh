@@ -3,7 +3,7 @@ SECRET_FILE_ZIP=tbaas-secrets.zip
 SECRET_DIR_OUT=tbaas-secrets
 SECRET_NAME=tridentity-tbaas-secrets
 TKE_CONFIG_FILE=tke-config.yml
-FILES_NEED_ENCODE_BASE64=("ca.crt" "user_sign.crt" "user_sign.key" "user_tls.crt" "user_tls.key" "chain_admin_cert" "chain_admin_key")
+FILES_NEED_ENCODE_BASE64=("ca.crt" "user_sign.cert" "user_sign.key" "user_tls.cert" "user_tls.key" "chain_admin_crt" "chain_admin_key")
 
 echo "Please input unzip password:"
 read SECRET_UNZIP_PASSWORD
@@ -77,9 +77,16 @@ for file in $SECRET_DIR_OUT/*; do
         echo "Skip encode base64 file: $file"
         continue
     fi
-    output_file=${file//./_}
-    base64 -i $file -o $output_file
-    rm -rf $file
+    output_file=$file
+    # check is file have extension
+    if [[ $file == *"."* ]]; then
+        output_file=${file//./_}
+        mv $file $output_file
+        rm -rf $file
+    fi
+    echo "Encode base64 file: $output_file"
+    base64 -i $output_file -o "$output_file"_base64
+    rm -rf $output_file
 done
 
 kubectl delete secret $SECRET_NAME --ignore-not-found=true
