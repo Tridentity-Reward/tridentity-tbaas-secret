@@ -77,7 +77,9 @@ for file in $SECRET_DIR_OUT/*; do
         echo "Skip encode base64 file: $file"
         continue
     fi
-    base64 -i $file -o $file
+    output_file=${file//./_}
+    base64 -i $file -o $output_file
+    rm -rf $file
 done
 
 kubectl delete secret $SECRET_NAME --ignore-not-found=true
